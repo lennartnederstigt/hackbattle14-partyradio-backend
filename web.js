@@ -1,5 +1,5 @@
 var express = require('express');
-var spotify = require('./spotify');
+var spotify = require('./spotify/spotify.js');
 var app = express();
 
 app.use(express.logger());
