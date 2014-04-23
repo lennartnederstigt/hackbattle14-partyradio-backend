@@ -14,6 +14,8 @@ import views.html.*;
 public class Application extends Controller {
 	
 	private static Repository repo = new Repository();
+	private static String apiKey = Play.application().configuration().getString("echonest.apikey");
+	private static EchoNestAPI echoNest = new EchoNestAPI(apiKey);
 	
     public static Result index() {
         return ok(index.render("Your new application is ready."));
@@ -24,8 +26,6 @@ public class Application extends Controller {
     }
     
     public static Result testEchoNest() throws EchoNestException {
-    	String apiKey = Play.application().configuration().getString("echonest.apikey");
-    	EchoNestAPI echoNest = new EchoNestAPI(apiKey);
     	List<String> genres = echoNest.listGenres();
     	return ok(Json.toJson(genres));
     }
