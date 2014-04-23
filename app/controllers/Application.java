@@ -1,8 +1,13 @@
 package controllers;
 
 import java.net.UnknownHostException;
+import java.util.List;
+
+import com.echonest.api.v4.EchoNestAPI;
+import com.echonest.api.v4.EchoNestException;
 
 import play.*;
+import play.libs.Json;
 import play.mvc.*;
 import views.html.*;
 
@@ -16,6 +21,13 @@ public class Application extends Controller {
     
     public static Result hello(String id) {
     	return ok("Hello " + id + "!");
+    }
+    
+    public static Result testEchoNest() throws EchoNestException {
+    	String apiKey = Play.application().configuration().getString("echonest.apikey");
+    	EchoNestAPI echoNest = new EchoNestAPI(apiKey);
+    	List<String> genres = echoNest.listGenres();
+    	return ok(Json.toJson(genres));
     }
     
     public static Result testConnection() throws UnknownHostException {

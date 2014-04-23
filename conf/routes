@@ -11,3 +11,4 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # testing
 GET        /api/hello/:id           controllers.Application.hello(id: String)
 GET		/api/mongo/test				controllers.Application.testConnection()
+GET		/api/echonest/test				controllers.Application.testEchoNest()
