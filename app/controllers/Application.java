@@ -8,6 +8,8 @@ import views.html.*;
 
 public class Application extends Controller {
 	
+	private static Repository repo = new Repository();
+	
     public static Result index() {
         return ok(index.render("Your new application is ready."));
     }
@@ -17,8 +19,7 @@ public class Application extends Controller {
     }
     
     public static Result testConnection() throws UnknownHostException {
-    	Repository repo = new Repository();
     	return ok("MongoDB result: " + repo.testConnection());
     }
-
+   
 }

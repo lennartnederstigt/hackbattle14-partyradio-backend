@@ -1,6 +1,7 @@
 package controllers;
 
 import java.net.UnknownHostException;
+import java.util.Set;
 
 import org.slf4j.Logger;
 
@@ -24,7 +25,7 @@ public class Repository {
 	
 	private DB db;
 	
-	public Repository() throws UnknownHostException {
+	public Repository() {
 		try {
 			MongoClient mongoClient = new MongoClient(mongoHost, mongoPort);
 			db = mongoClient.getDB(mongoDB);
@@ -47,4 +48,5 @@ public class Repository {
 		DBObject myDoc = coll.findOne();
 		return myDoc.toString();
 	}
+
 }
