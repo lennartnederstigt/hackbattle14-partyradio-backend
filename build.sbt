@@ -6,7 +6,7 @@ libraryDependencies ++= Seq(
   javaJdbc,
   javaEbean,
   cache,
-  "net.vz.mongodb.jackson" %% "play-mongo-jackson-mapper" % "1.1.0" 
-)     
+  "org.mongodb" % "mongo-java-driver" % "2.12.0"
+)
 
 play.Project.playJavaSettings
