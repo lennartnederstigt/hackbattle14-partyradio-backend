@@ -9,6 +9,7 @@ var mongoose = require('mongoose');
 var http = require('http');
 var login = require('./routes/login');
 var write = require('./routes/write');
+var hello = require('./routes/hello');
 
 //connect to mongodb
 mongoose.connect('mongodb://heroku_app24454838:eldena5910ft7mvodp451vt5ck@ds031328.mongolab.com:31328/heroku_app24454838');
@@ -64,6 +65,10 @@ app.configure(function() {
 
 app.get('/login/fb', login.loginFacebook);
 app.get('/login/success', login.loginSuccess);
+
+app.get('/rick', function(request, response) {
+  response.send('Hello RICK!');
+});
 
 // Redirect the user to Facebook for authentication.  When complete,
 // Facebook will redirect the user back to the application at
