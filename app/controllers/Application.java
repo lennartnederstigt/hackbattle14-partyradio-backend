@@ -110,6 +110,7 @@ public class Application extends Controller {
 	}
 	
 	public static Result getPlaylist() {
+        response().setHeader("Access-Control-Allow-Origin", "*");
 		return ok(Json.toJson(trackVotes.keySet()));
 	}
 	
@@ -133,6 +134,8 @@ public class Application extends Controller {
 		System.out.println("Received request for track ID " + id);
 		System.out.println(trackVotes);
 		
+        response().setHeader("Access-Control-Allow-Origin", "*");
+
 		return ok("Request processed");
 	}
 	
@@ -176,6 +179,8 @@ public class Application extends Controller {
         result.put("name", song.getArtistName());
         result.put("id", song.getID());
         result.put("image", song.getCoverArt());
+        response().setHeader("Access-Control-Allow-Origin", "*");
+
 		return ok(Json.toJson(result));
 	}
 	
@@ -187,18 +192,26 @@ public class Application extends Controller {
 	  JsonNode json =  request().body().asJson();
 	  System.out.println("JSON Object: " + json);
 	  if(json == null) {
+	        response().setHeader("Access-Control-Allow-Origin", "*");
+
 	    return badRequest("Expecting Json data");
 	  } else {
+	        response().setHeader("Access-Control-Allow-Origin", "*");
+
 		  return ok("Hello person");	    
 	  }
 	}
     
     public static Result testEchoNest() throws EchoNestException {
     	List<String> genres = echoNest.listGenres();
+        response().setHeader("Access-Control-Allow-Origin", "*");
+
     	return ok(Json.toJson(genres));
     }
     
     public static Result testConnection() throws UnknownHostException {
+        response().setHeader("Access-Control-Allow-Origin", "*");
+
     	return ok("MongoDB result: " + repo.testConnection());
     }
     
