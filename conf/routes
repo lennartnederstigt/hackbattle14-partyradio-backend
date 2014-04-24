@@ -8,6 +8,9 @@ GET     /                           controllers.Application.index()
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
+# song search
+GET /api/song/:searchString 		controllers.Application.searchSong(searchString: String)
+
 # testing
 GET        /api/hello/:id           controllers.Application.hello(id: String)
 GET		/api/mongo/test				controllers.Application.testConnection()

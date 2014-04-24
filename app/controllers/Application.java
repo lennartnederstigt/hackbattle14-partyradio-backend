@@ -1,19 +1,43 @@
 package controllers;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+
+import akka.japi.Function;
 
 import com.echonest.api.v4.EchoNestAPI;
 import com.echonest.api.v4.EchoNestException;
+import com.echonest.api.v4.Params;
+import com.echonest.api.v4.Song;
+import com.echonest.api.v4.SongCatalog;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import play.*;
+import play.libs.Akka;
 import play.libs.F.Callback;
 import play.libs.F.Callback0;
+import play.libs.F.Promise;
 import play.libs.Json;
+import play.libs.WS;
+import play.libs.WS.Response;
+import play.libs.WS.WSRequestHolder;
 import play.mvc.*;
+import scala.Function0;
 import views.html.*;
 
 public class Application extends Controller {
@@ -25,6 +49,7 @@ public class Application extends Controller {
     private static int currentScore = 0;
     private static int nextMemberIndex = 0;
     private static Map<Integer, WebSocket.Out<JsonNode>> members = new HashMap<Integer, WebSocket.Out<JsonNode>>();
+	private static Iterator<JsonNode> iterator;
 	
 	// Create a WebSocket on startup
 	public static WebSocket<JsonNode> index(){
@@ -67,6 +92,49 @@ public class Application extends Controller {
 				});
 			}
 		};
+	}
+	
+	public static Result searchSong(String searchString) throws Exception {
+		Params p = new Params();
+        p.add("title", searchString);
+        p.add("results", 1);
+        p.add("bucket", "id:deezer");
+        p.add("bucket", "tracks");
+        List<Song> songs = echoNest.searchSongs(p);
+//        
+//        Song song = songs.get(0);
+//		Map<String, Object> result = new HashMap<>();
+//        result.put("name", song.getArtistName());
+//        result.put("id", song.getID());
+//        result.put("image", song.getCoverArt());
+        
+//        String url = "http://developer.echonest.com/api/v4/song/search?api_key="+ apiKey +"&format=json&results=1&title=" + URLEncoder.encode(searchString) + "&bucket=id:deezer&bucket=tracks";
+//        URL obj = new URL(url);
+//		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+//		BufferedReader in = new BufferedReader(
+//		        new InputStreamReader(con.getInputStream()));
+//		String inputLine;
+//		StringBuffer response = new StringBuffer();
+// 
+//		while ((inputLine = in.readLine()) != null) {
+//			response.append(inputLine);
+//		}
+//		in.close();
+//		
+//		ObjectMapper mapper = new ObjectMapper();
+//		JsonNode rootNode = mapper.readTree(response.toString());
+//		
+//		Map<String, Object> result = new HashMap<>();
+//        result.put("name", rootNode.findValue("artist_name").asText());
+//        result.put("id", rootNode.findValue("id").asText());
+		        
+        Song song = songs.get(0);
+        Map<String, Object> result = new HashMap<>();
+//        System.out.println(song.toString());
+        result.put("name", song.getArtistName());
+        result.put("id", song.getID());
+        result.put("image", song.getCoverArt());
+		return ok(Json.toJson(result));
 	}
 	
     public static Result hello(String id) {
