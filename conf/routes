@@ -11,6 +11,9 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # song search
 GET /api/song/:id 		controllers.Application.searchSong(id: String)
 
+# playlist
+GET /api/playlist	controllers.Application.getPlaylist()
+
 # testing
 GET        /api/hello/:id           controllers.Application.hello(id: String)
 GET		/api/mongo/test				controllers.Application.testConnection()

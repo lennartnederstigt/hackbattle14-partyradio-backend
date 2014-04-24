@@ -94,6 +94,10 @@ public class Application extends Controller {
 		};
 	}
 	
+	public static Result getPlaylist() {
+		return ok(Json.toJson(trackVotes.keySet()));
+	}
+	
 	public static Result searchSong(String id) throws Exception {
 		if (trackVotes.containsKey(id)) {
 			Integer count = trackVotes.get(id);
