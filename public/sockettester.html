@@ -39,7 +39,7 @@
 
 	
 	function onOpen(evt) { 
-		writeToScreen("CONNECTED"); doSend("WebSocket rocks"); 
+		writeToScreen("CONNECTED"); //doSend("WebSocket rocks"); 
 	}  
 
 	
@@ -53,11 +53,11 @@
 
 	//add event listener
 	voteUp.addEventListener('click', function(event) {
-		websocket.send("upvote");
+		websocket.send(JSON.stringify({event : "upvote"}));
 	});
 
 	voteDown.addEventListener('click', function(event) {
-		websocket.send("downvote");
+		websocket.send(JSON.stringify({event : "downvote"}));
 	});
 
 	

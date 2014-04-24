@@ -31,31 +31,30 @@ public class Application extends Controller {
 		return new WebSocket<JsonNode>(){
 			public void onReady(WebSocket.In<JsonNode> in, final WebSocket.Out<JsonNode> out){
 				// Send a single 'Hello!' message
-				writeMessage(out, "Hello!");
 				members.put(nextMemberIndex++, out);
+				writeMessage(out, "Hello!");
 
 				// For each event received on the socket,
 				in.onMessage(new Callback<JsonNode>() {
 					public void invoke(JsonNode event) {				       
-
-						System.out.println("json node: " + event);
-						if(event.equals("upvote")) {
+						
+						if(event.get("event").asText().equals("upvote")) {
 							currentScore++;
 							
 							System.out.println("Upvote!"); 
-							writeMessage(out, "Yeahh!!");
+							writeMessage(null, "Yeahh!!");
 						}
-						if(event.equals("downvote")) {
+						if(event.get("event").asText().equals("downvote")) {
 							currentScore--;
 							System.out.println("Downvote!"); 
-							writeMessage(out, "Boohoooo!!");
+							writeMessage(null, "Boohoooo!!");
 						}
 
-						if(event.equals("hi")) {
-							writeMessage(out, "hey man!");
+						if(event.get("event").asText().equals("hi")) {
+							writeMessage(null, "hey man!");
 						}
 
-						writeMessage(out, "Huidige score: " + currentScore);
+						writeMessage(null, "Huidige score: " + currentScore);
 
 					} 
 				});
@@ -94,7 +93,13 @@ public class Application extends Controller {
     }
     
     private static void writeMessage(WebSocket.Out<JsonNode> socket, String message) {
-    	socket.write(Json.toJson(message));
+    	if (socket != null) {
+    		socket.write(Json.toJson(message));
+    	} else {
+    		for (WebSocket.Out<JsonNode> out : members.values()) {
+    			out.write(Json.toJson(message));    		
+    		}    		
+    	}
     }
    
 }
