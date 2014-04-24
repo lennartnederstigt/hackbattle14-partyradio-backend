@@ -8,15 +8,14 @@
 	<button id="vote-down" onclick="voteDown()">-</button>
 </body>
 <script language="javascript" type="text/javascript">  
-	
-	var wsUri = "ws://localhost:9000"; 
+    var host = location.origin.replace(/^http/, 'ws')
 	var output;  
 	function init() { 
 		output = document.getElementById("output"); testWebSocket(); 
 	}  
 	
 	function testWebSocket() { 
-		websocket = new WebSocket(wsUri); 
+		websocket = new WebSocket(host); 
 		websocket.onopen = 
 		function(evt) { 
 			onOpen(evt) 
