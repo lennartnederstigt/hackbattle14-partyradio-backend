@@ -47,7 +47,7 @@ public class Application extends Controller {
 				       }
 				       
 				       out.write("Huidige score: " + currentScore);
-				       	
+				       
 				     } 
 				  });
 				  
@@ -60,6 +60,7 @@ public class Application extends Controller {
 				  
 				  // Send a single 'Hello!' message
 				  out.write("Hello!");
+				  
 			}
 		};
 	}
