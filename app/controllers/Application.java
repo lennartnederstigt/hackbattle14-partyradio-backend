@@ -1,44 +1,24 @@
 package controllers;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.Callable;
 
-import akka.japi.Function;
+import play.Play;
+import play.libs.F.Callback;
+import play.libs.F.Callback0;
+import play.libs.Json;
+import play.mvc.Controller;
+import play.mvc.Result;
+import play.mvc.WebSocket;
 
 import com.echonest.api.v4.EchoNestAPI;
 import com.echonest.api.v4.EchoNestException;
 import com.echonest.api.v4.Params;
 import com.echonest.api.v4.Song;
-import com.echonest.api.v4.SongCatalog;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import play.*;
-import play.libs.Akka;
-import play.libs.F.Callback;
-import play.libs.F.Callback0;
-import play.libs.F.Promise;
-import play.libs.Json;
-import play.libs.WS;
-import play.libs.WS.Response;
-import play.libs.WS.WSRequestHolder;
-import play.mvc.*;
-import scala.Function0;
-import views.html.*;
 
 public class Application extends Controller {
 	
@@ -49,8 +29,10 @@ public class Application extends Controller {
     private static int currentScore = 0;
     private static int nextMemberIndex = 0;
     private static Map<Integer, WebSocket.Out<JsonNode>> members = new HashMap<Integer, WebSocket.Out<JsonNode>>();
-	private static Iterator<JsonNode> iterator;
-	
+
+    private static Map<String, Integer> trackVotes = new HashMap<>();
+    private static int requestsSinceLastUpdate = 0;
+    
 	// Create a WebSocket on startup
 	public static WebSocket<JsonNode> index(){
 		return new WebSocket<JsonNode>(){
@@ -61,26 +43,44 @@ public class Application extends Controller {
 
 				// For each event received on the socket,
 				in.onMessage(new Callback<JsonNode>() {
-					public void invoke(JsonNode event) {				       
+					public void invoke(JsonNode event) {	
+//						String trackID = event.get("track").asText();
 						
 						if(event.get("event").asText().equals("upvote")) {
+//							if (trackVotes.containsKey(trackID)) {
+//								Integer count = trackVotes.get(trackID);
+//								trackVotes.put(trackID, count++);
+//								requestsSinceLastUpdate++;
+//							}
 							currentScore++;
 							
-							System.out.println("Upvote!"); 
+							System.out.println("Upvote!");
+//							System.out.println("Upvoted " + trackID + "!"); 
 							writeMessage(null, "Yeahh!!");
 						}
 						if(event.get("event").asText().equals("downvote")) {
+//							if (trackVotes.containsKey(trackID)) {
+//								Integer count = trackVotes.get(trackID);
+//								trackVotes.put(trackID, count++);
+//								requestsSinceLastUpdate++;
+//							}
 							currentScore--;
-							System.out.println("Downvote!"); 
+							
+							System.out.println("Downvote!");
+//							System.out.println("Downvoted " + trackID + "!"); 
 							writeMessage(null, "Boohoooo!!");
 						}
 
 						if(event.get("event").asText().equals("hi")) {
 							writeMessage(null, "hey man!");
 						}
+						
+						if (requestsSinceLastUpdate >= 3) {
+							writePlaylist();
+							requestsSinceLastUpdate = 0;
+						}
 
 						writeMessage(null, "Huidige score: " + currentScore);
-
 					} 
 				});
 
@@ -94,7 +94,30 @@ public class Application extends Controller {
 		};
 	}
 	
-	public static Result searchSong(String searchString) throws Exception {
+	public static Result searchSong(String id) throws Exception {
+		if (trackVotes.containsKey(id)) {
+			Integer count = trackVotes.get(id);
+			trackVotes.put(id, ++count);
+		} else {
+			trackVotes.put(id, 1);
+		}
+		requestsSinceLastUpdate++;
+		
+		System.out.println("requests since last update: " + requestsSinceLastUpdate);
+		
+		if (requestsSinceLastUpdate >= 3) {
+			writePlaylist();
+//			writeMessage(null, "sending playlist");
+			requestsSinceLastUpdate = 0;
+		}
+		
+		System.out.println("Received request for track ID " + id);
+		System.out.println(trackVotes);
+		
+		return ok("Request processed");
+	}
+	
+	public static Result searchSongOld(String searchString) throws Exception {
 		Params p = new Params();
         p.add("title", searchString);
         p.add("results", 1);
@@ -162,12 +185,21 @@ public class Application extends Controller {
     
     private static void writeMessage(WebSocket.Out<JsonNode> socket, String message) {
     	if (socket != null) {
+        	System.out.println("Sending to 1 socket out of " + members.values().size());
     		socket.write(Json.toJson(message));
     	} else {
+        	System.out.println("Sending to " + members.values().size() + " sockets out of " + members.values().size());
     		for (WebSocket.Out<JsonNode> out : members.values()) {
     			out.write(Json.toJson(message));    		
     		}    		
     	}
+    }
+    
+    private static void writePlaylist() {
+    	System.out.println("Sending to " + members.values().size() + " sockets out of " + members.values().size());
+    	for (WebSocket.Out<JsonNode> out : members.values()) {
+    		out.write(Json.toJson(trackVotes.keySet()));    		
+    	}    		
     }
    
 }

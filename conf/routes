@@ -9,7 +9,7 @@ GET     /                           controllers.Application.index()
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 # song search
-GET /api/song/:searchString 		controllers.Application.searchSong(searchString: String)
+GET /api/song/:id 		controllers.Application.searchSong(id: String)
 
 # testing
 GET        /api/hello/:id           controllers.Application.hello(id: String)
