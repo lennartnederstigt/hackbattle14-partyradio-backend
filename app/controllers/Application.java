@@ -1,7 +1,9 @@
 package controllers;
 
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.echonest.api.v4.EchoNestAPI;
 import com.echonest.api.v4.EchoNestException;
@@ -21,45 +23,50 @@ public class Application extends Controller {
 	private static EchoNestAPI echoNest = new EchoNestAPI(apiKey);
    
     private static int currentScore = 0;
+    private static int nextMemberIndex = 0;
+    private static Map<Integer, WebSocket.Out<JsonNode>> members = new HashMap<Integer, WebSocket.Out<JsonNode>>();
 	
 	// Create a WebSocket on startup
-	public static WebSocket<String> index(){
-		return new WebSocket<String>(){
-			public void onReady(WebSocket.In<String> in, final WebSocket.Out<String> out){
-				
+	public static WebSocket<JsonNode> index(){
+		return new WebSocket<JsonNode>(){
+			public void onReady(WebSocket.In<JsonNode> in, final WebSocket.Out<JsonNode> out){
+				// Send a single 'Hello!' message
+				writeMessage(out, "Hello!");
+				members.put(nextMemberIndex++, out);
+
 				// For each event received on the socket,
-				  in.onMessage(new Callback<String>() {
-				     public void invoke(String event) {				       
-				      
-				       if(event.equals("upvote")) {
-				    	   currentScore++;
-				    	   System.out.println("Upvote!"); 
-				    	   out.write("Yeahh!!");
-				       }
-				       if(event.equals("downvote")) {
-				    	   currentScore--;
-				    	   System.out.println("Downvote!"); 
-				    	   out.write("Boohoooo!!");
-				       }
-				       
-				       if(event.equals("hi")) {
-				    	   out.write("hey man!");
-				       }
-				       
-				       out.write("Huidige score: " + currentScore);
-				       	
-				     } 
-				  });
-				  
-				  // When the socket is closed.
-				  in.onClose(new Callback0() {
-				     public void invoke() {				         
-				    	 System.out.println("WebSocket Disconnected");				         
-				     }
-				  });
-				  
-				  // Send a single 'Hello!' message
-				  out.write("Hello!");
+				in.onMessage(new Callback<JsonNode>() {
+					public void invoke(JsonNode event) {				       
+
+						System.out.println("json node: " + event);
+						if(event.equals("upvote")) {
+							currentScore++;
+							
+							System.out.println("Upvote!"); 
+							writeMessage(out, "Yeahh!!");
+						}
+						if(event.equals("downvote")) {
+							currentScore--;
+							System.out.println("Downvote!"); 
+							writeMessage(out, "Boohoooo!!");
+						}
+
+						if(event.equals("hi")) {
+							writeMessage(out, "hey man!");
+						}
+
+						writeMessage(out, "Huidige score: " + currentScore);
+
+					} 
+				});
+
+				// When the socket is closed.
+				in.onClose(new Callback0() {
+					public void invoke() {				         
+						System.out.println("WebSocket Disconnected");				         
+					}
+				});
+
 			}
 		};
 	}
@@ -85,6 +92,10 @@ public class Application extends Controller {
     
     public static Result testConnection() throws UnknownHostException {
     	return ok("MongoDB result: " + repo.testConnection());
+    }
+    
+    private static void writeMessage(WebSocket.Out<JsonNode> socket, String message) {
+    	socket.write(Json.toJson(message));
     }
    
 }
