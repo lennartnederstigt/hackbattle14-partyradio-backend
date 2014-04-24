@@ -1,0 +1,14 @@
+// Import gridle :
+@import '../bower_components/gridle/sass/gridle/gridle';
+
+
+// Configure :
+$gridle-columns-count : 12;
+$gridle-gutter-width : 20px;
+$gridle-debug : false;
+$gridle-html-states-classes : true; // not really for production, used for demo here...
+
+@include gridle_register_default_states();
+// @include gridle_register_state('ipad-landscape', 'only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : landscape)');
+@include gridle_register_state ( 'mobile' , null , 640px );
+@include gridle_register_state ( 'desktop' , 641px , null );

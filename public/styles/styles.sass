@@ -1,0 +1,129 @@
+// Import grid settings :
+@import grid-settings
+@import compass/reset
+@import compass
+
+@import url(http://fonts.googleapis.com/css?family=Lato:300,700)
+
+// Generate classes :
++gridle_generate_classes()
+
+html
+	font-size: 1.2em
+
+body
+	+background(linear-gradient(bottom right, #f18034, #ec6251))
+	background-color: #f18034
+	font-family: 'Lato', sans-serif
+	font-weight: 300
+	color: white
+
+
+
+h1, h2, h3, h4, h5, h6
+	font-weight: 700
+
+
+// Max size :
+.container
+	margin: 0 auto
+	max-width: 640px
+
+.suggestion.container
+	background-color: #3b3b3b
+	height: 60px
+
+	input
+		vertical-align: middle
+		background-color: #3b3b3b
+		color: white
+		border: none
+		font-size: 1rem
+		margin-top: 1em
+
+ul.autocomplete
+	background-color: #1b1b1b
+
+	li
+		height: 60px
+		margin-top: 1px
+		background-color: #262525
+
+		img
+			width: 60px
+			height: auto
+
+	.meta
+		display: inline-block
+		padding: 0.5em
+		vertical-align: top
+		white-space: nowrap
+		overflow: hidden
+
+
+	.title
+		margin-bottom: 0.3em
+
+	.artist
+		font-size: 0.7em
+		text-transform: uppercase
+		color: #929292
+		font-weight: 700
+
+	a
+		color: white
+		text-decoration: none
+
+
+.song
+	position: relative
+	margin: 25px auto 0 auto
+	.dimmer
+		height: 250px
+		width: 100%
+		background-color: black
+		opacity: 0.3
+		position: absolute
+	.status
+		color: white
+		position: absolute
+		top: -20px
+		font-size: 12px
+
+	.head
+		width: inherit
+		height: 250px
+		color: white
+		.song-title
+			padding-left: 20px
+		.artist-name
+			padding-left: 20px
+	.bottom
+		margin-top: -3px
+		height: 50px
+		width: inherit
+		color: #929292
+		line-height: 50px
+		background-color: #1b1b1b
+		b
+			color: #ffffff
+	.bottom-dropdown
+		.voter-name
+			margin-top: -3px
+			padding-left: 20px
+			height: 50px
+			width: inherit
+			color: #929292
+			line-height: 50px
+			background-color: #262525
+			border-bottom: 1px solid #000000
+			b
+				color: #ffffff
+
+
+.hide
+	display:none
+
+.clear
+	clear: both
+
