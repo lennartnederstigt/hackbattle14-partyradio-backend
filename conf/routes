@@ -5,6 +5,9 @@
 # Home page
 GET     /                           controllers.Application.index()
 
+## JSON pre-flight for cross-origin resource sharing (CORS)
+OPTIONS     /*wholepath                              controllers.Application.preflight(wholepath)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 

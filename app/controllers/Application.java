@@ -33,6 +33,21 @@ public class Application extends Controller {
     private static Map<String, Integer> trackVotes = new HashMap<>();
     private static int requestsSinceLastUpdate = 0;
     
+    /**
+     * Returns a response appropriate headers for allowing cross-origin resource sharing (CORS).
+     * Needed for running frontend and backend on separate locations or ports.
+     * 
+     * @param wholepath	the path of the request
+     * @return	response with appropriate headers for allowing cross-origin resource sharing (CORS)
+     */
+    public static Result preflight(String wholepath) {
+    	response().setHeader("Access-Control-Allow-Origin", "*");       // Need to add the correct domain in here!!
+        response().setHeader("Access-Control-Allow-Methods", "GET");   // Only allow GET
+        response().setHeader("Access-Control-Max-Age", "300");          // Cache response for 5 minutes
+        response().setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");         // Ensure this header is also allowed!
+    	return ok();
+    }
+    
 	// Create a WebSocket on startup
 	public static WebSocket<JsonNode> index(){
 		return new WebSocket<JsonNode>(){
